@@ -1,0 +1,6 @@
+{
+  "name": "Apex Trade",
+  "description": "Modern high-precision financial trading platform with live candlestick charts, binary execution, asset conditions, leaderboard, and deposit wallet.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
