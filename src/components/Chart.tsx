@@ -73,8 +73,7 @@ export const Chart: React.FC<ChartProps> = ({
       initialCandles.push({ time, open, high, low, close });
     }
     setCandles(initialCandles);
-    onPriceUpdate(price);
-  }, [asset.id, timeframe]);
+  }, [asset.id, timeframe, asset.basePrice]);
 
   // Live Tick Simulation Engine
   useEffect(() => {
@@ -88,8 +87,6 @@ export const Chart: React.FC<ChartProps> = ({
         const volatility = last.close * 0.00018;
         const tickChange = (Math.random() - 0.495) * volatility;
         const nextPrice = Number((last.close + tickChange).toFixed(asset.precision));
-
-        onPriceUpdate(nextPrice);
 
         // Check if current candle duration elapsed
         if (now - last.time >= tfSeconds) {
@@ -111,7 +108,20 @@ export const Chart: React.FC<ChartProps> = ({
     }, 600);
 
     return () => clearInterval(interval);
-  }, [timeframe, asset.precision, onPriceUpdate]);
+  }, [timeframe, asset.precision]);
+
+  // Safely notify parent of price update after rendering in a dedicated effect
+  const onPriceUpdateRef = useRef(onPriceUpdate);
+  useEffect(() => {
+    onPriceUpdateRef.current = onPriceUpdate;
+  }, [onPriceUpdate]);
+
+  useEffect(() => {
+    if (candles.length > 0) {
+      const latestPrice = candles[candles.length - 1].close;
+      onPriceUpdateRef.current(latestPrice);
+    }
+  }, [candles]);
 
   // Visible Candles Slice
   const visibleCandles = useMemo(() => {
