@@ -6,12 +6,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import confetti from 'canvas-confetti';
 import { 
-  Sparkles, 
   Trophy, 
   Zap, 
   History, 
-  Smartphone, 
-  Monitor,
+  Wallet,
+  Menu,
+  X,
   CheckCircle2,
   XCircle,
   AlertCircle
@@ -66,7 +66,7 @@ export default function App() {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [mobileFrameMode, setMobileFrameMode] = useState<boolean>(false);
 
-  // Toast banner notification
+  // Sleek floating toast notification (auto-dismissing, non-intrusive)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'danger' | 'info' } | null>(null);
 
   // Modals visibility
@@ -85,10 +85,16 @@ export default function App() {
 
   const showToastNotification = (message: string, type: 'success' | 'danger' | 'info') => {
     setToast({ message, type });
-    setTimeout(() => {
-      setToast(null);
-    }, 3500);
   };
+
+  // Auto-dismiss toast in 2.2 seconds
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => {
+      setToast(null);
+    }, 2200);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   // Toggle Sound
   const handleToggleSound = () => {
@@ -101,7 +107,7 @@ export default function App() {
     const currentBalance = accountType === 'demo' ? balanceDemo : balanceReal;
     if (currentBalance < investmentAmount) {
       sound.playLoss();
-      showToastNotification(`Insufficient balance ($${currentBalance.toFixed(2)}). Please top up or decrease amount.`, 'danger');
+      showToastNotification(`Insufficient balance ($${currentBalance.toFixed(2)}). Please top up.`, 'danger');
       if (accountType === 'real') {
         setShowDepositModal(true);
       }
@@ -208,7 +214,6 @@ export default function App() {
               } catch {}
               showToastNotification(`Trade Won! +$${trade.expectedPayout.toFixed(2)} on ${trade.assetName}`, 'success');
               
-              // Credit back balance
               if (accountType === 'demo') {
                 setBalanceDemo((b) => Number((b + payout).toFixed(2)));
               } else {
@@ -282,34 +287,39 @@ export default function App() {
     showToastNotification('Demo balance reset to $10,000.00', 'info');
   };
 
-  // Content Container (either full screen workstation or mobile frame simulator)
   return (
-    <div className="min-h-screen bg-[#edeef3] text-[#1c2127] flex flex-col items-center justify-center">
+    <div className="h-[100dvh] max-h-[100dvh] w-full max-w-full overflow-hidden bg-[#edf0f5] text-[#1c2127] flex flex-col justify-between">
       
-      {/* Toast Banner Notification */}
+      {/* Floating Compact Notification Toast (Fixed non-intrusive bar with close button) */}
       {toast && (
-        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs sm:text-sm font-bold text-white transition-all animate-in slide-in-from-top-3 ${
+        <div className={`fixed top-3 left-1/2 -translate-x-1/2 z-50 px-3 py-1.5 rounded-full shadow-lg flex items-center gap-2 text-xs font-semibold text-white transition-all animate-in fade-in slide-in-from-top-2 max-w-[90vw] ${
           toast.type === 'success' 
-            ? 'bg-emerald-600 border border-emerald-500' 
+            ? 'bg-emerald-600/95 border border-emerald-400' 
             : toast.type === 'danger' 
-              ? 'bg-rose-600 border border-rose-500' 
-              : 'bg-gray-900 border border-gray-700'
+              ? 'bg-rose-600/95 border border-rose-400' 
+              : 'bg-gray-900/95 border border-gray-700'
         }`}>
-          {toast.type === 'success' && <CheckCircle2 className="w-4 h-4 shrink-0" />}
-          {toast.type === 'danger' && <XCircle className="w-4 h-4 shrink-0" />}
-          {toast.type === 'info' && <AlertCircle className="w-4 h-4 shrink-0" />}
-          <span>{toast.message}</span>
+          {toast.type === 'success' && <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />}
+          {toast.type === 'danger' && <XCircle className="w-3.5 h-3.5 shrink-0" />}
+          {toast.type === 'info' && <AlertCircle className="w-3.5 h-3.5 shrink-0" />}
+          <span className="truncate">{toast.message}</span>
+          <button 
+            onClick={() => setToast(null)}
+            className="p-0.5 hover:bg-white/20 rounded-full cursor-pointer ml-1 text-white/80"
+          >
+            <X className="w-3 h-3" />
+          </button>
         </div>
       )}
 
-      {/* Main Trading Shell (Seamlessly adapts to desktop or mobile preview mode) */}
-      <div className={`w-full transition-all flex flex-col ${
+      {/* Main Container - strictly constrained to viewport height (screen se bhar na jaya) */}
+      <div className={`w-full h-full flex flex-col overflow-hidden ${
         mobileFrameMode 
-          ? 'max-w-[430px] h-[92vh] max-h-[920px] rounded-[36px] border-[10px] border-gray-900 shadow-2xl overflow-hidden my-auto relative bg-white' 
-          : 'h-screen max-w-full overflow-hidden'
+          ? 'max-w-[430px] mx-auto h-[92vh] my-auto rounded-[36px] border-[10px] border-gray-900 shadow-2xl relative bg-white' 
+          : 'max-w-full'
       }`}>
 
-        {/* Header Bar */}
+        {/* 1. Header Bar */}
         <Header
           currentAsset={selectedAsset}
           balanceDemo={balanceDemo}
@@ -328,65 +338,18 @@ export default function App() {
           onOpenAlerts={() => setShowSignalsModal(true)}
         />
 
-        {/* Center: Live Candlestick Chart Area */}
-        <main className="flex-1 flex flex-col relative overflow-hidden">
+        {/* 2. Interactive Candlestick Chart (with i button next to GMT+5, Panning, and Zoom) */}
+        <main className="flex-1 flex flex-col relative overflow-hidden min-h-0">
           <Chart
             asset={selectedAsset}
             activeTrades={activeTrades.filter((t) => t.assetId === selectedAsset.id)}
             onPriceUpdate={setCurrentLivePrice}
             selectedDurationSeconds={durationSeconds}
+            onOpenAssetInfo={() => setShowAssetInfo(true)}
           />
         </main>
 
-        {/* Quick Dock Action Pills (Matches screenshot feature set: Leaderboard, Portfolio, Signals) */}
-        <div className="bg-white/80 backdrop-blur-xs border-t border-gray-100 px-3 py-1 flex items-center justify-between text-xs">
-          <div className="flex items-center gap-1 sm:gap-2">
-            <button
-              onClick={() => {
-                setShowPortfolioDrawer(true);
-                sound.playClick();
-              }}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-gray-700 hover:bg-gray-100 font-semibold text-[11px] transition-colors relative cursor-pointer"
-            >
-              <History className="w-3.5 h-3.5 text-indigo-600" />
-              <span>Trades</span>
-              {activeTrades.length > 0 && (
-                <span className="w-4 h-4 rounded-full bg-indigo-600 text-white font-mono text-[9px] font-bold flex items-center justify-center">
-                  {activeTrades.length}
-                </span>
-              )}
-            </button>
-
-            <button
-              onClick={() => {
-                setShowLeaderboardModal(true);
-                sound.playClick();
-              }}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-gray-700 hover:bg-gray-100 font-semibold text-[11px] transition-colors cursor-pointer"
-            >
-              <Trophy className="w-3.5 h-3.5 text-amber-500" />
-              <span>Leaderboard</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setShowSignalsModal(true);
-                sound.playClick();
-              }}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-gray-700 hover:bg-gray-100 font-semibold text-[11px] transition-colors cursor-pointer"
-            >
-              <Zap className="w-3.5 h-3.5 text-emerald-500" />
-              <span>Signals</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-            </button>
-          </div>
-
-          <div className="text-[10px] text-gray-400 font-mono hidden xs:block">
-            One-Click: <strong className={oneClickTrading ? 'text-emerald-600' : 'text-gray-400'}>{oneClickTrading ? 'ON' : 'OFF'}</strong>
-          </div>
-        </div>
-
-        {/* Bottom Trading Control Panel (Investments, Expiration, LOWER, HIGHER) */}
+        {/* 3. Bottom Trading Control Panel (Investments, Expiration, LOWER, HIGHER) */}
         <TradingPanel
           asset={selectedAsset}
           balance={accountType === 'demo' ? balanceDemo : balanceReal}
@@ -398,6 +361,92 @@ export default function App() {
           onOpenPendingOrderModal={() => setShowPendingModal(true)}
           onExecuteTrade={handleInitiateTrade}
         />
+
+        {/* 4. USER REQUIREMENT: Bottom Navigation Bar at the BOTTOM of screen with Glass Blur UI (Trades History, Leaderboard, Signals, Menu) */}
+        <nav className="bg-white/80 backdrop-blur-xl border-t border-gray-200/70 px-2 sm:px-6 py-1.5 flex items-center justify-between text-xs shrink-0 z-20 shadow-[0_-4px_16px_rgba(0,0,0,0.02)]">
+          <div className="flex items-center w-full justify-around">
+            
+            {/* Trades History Tab */}
+            <button
+              onClick={() => {
+                setShowPortfolioDrawer(true);
+                sound.playClick();
+              }}
+              className="flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl hover:bg-gray-100/70 text-gray-700 hover:text-indigo-600 transition-all cursor-pointer active:scale-95"
+              title="Trades History"
+            >
+              <div className="relative flex items-center justify-center">
+                <History className="w-4 h-4 text-indigo-600" />
+                {activeTrades.length > 0 && (
+                  <span className="absolute -top-1.5 -right-2 w-4 h-4 rounded-full bg-indigo-600 text-white font-mono text-[9px] font-bold flex items-center justify-center ring-2 ring-white animate-pulse">
+                    {activeTrades.length}
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] font-bold tracking-tight">Trades</span>
+            </button>
+
+            {/* Leaderboard Tab */}
+            <button
+              onClick={() => {
+                setShowLeaderboardModal(true);
+                sound.playClick();
+              }}
+              className="flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl hover:bg-gray-100/70 text-gray-700 hover:text-amber-600 transition-all cursor-pointer active:scale-95"
+              title="Top Traders Leaderboard"
+            >
+              <Trophy className="w-4 h-4 text-amber-500" />
+              <span className="text-[10px] font-bold tracking-tight">Leaderboard</span>
+            </button>
+
+            {/* Signals Tab */}
+            <button
+              onClick={() => {
+                setShowSignalsModal(true);
+                sound.playClick();
+              }}
+              className="flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl hover:bg-gray-100/70 text-gray-700 hover:text-emerald-600 transition-all cursor-pointer active:scale-95"
+              title="Live Technical Signals"
+            >
+              <div className="relative flex items-center justify-center">
+                <Zap className="w-4 h-4 text-emerald-500" />
+                <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+              </div>
+              <span className="text-[10px] font-bold tracking-tight">Signals</span>
+            </button>
+
+            {/* Deposit Quick Tab */}
+            <button
+              onClick={() => {
+                setShowDepositModal(true);
+                sound.playClick();
+              }}
+              className="flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl hover:bg-indigo-50/80 text-indigo-600 transition-all cursor-pointer active:scale-95"
+              title="Deposit Wallet"
+            >
+              <div className="relative flex items-center justify-center">
+                <Wallet className="w-4 h-4 text-indigo-600" />
+                <span className="absolute -top-1.5 -right-3 text-[8px] font-black bg-indigo-600 text-white px-1 rounded-full ring-1 ring-white">
+                  +70%
+                </span>
+              </div>
+              <span className="text-[10px] font-bold tracking-tight">Deposit</span>
+            </button>
+
+            {/* Menu / Profile Drawer Tab */}
+            <button
+              onClick={() => {
+                setShowProfileDrawer(true);
+                sound.playClick();
+              }}
+              className="flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl hover:bg-gray-100/70 text-gray-700 hover:text-gray-900 transition-all cursor-pointer active:scale-95"
+              title="Apex Store Menu"
+            >
+              <Menu className="w-4 h-4 text-gray-600" />
+              <span className="text-[10px] font-bold tracking-tight">Menu</span>
+            </button>
+          </div>
+        </nav>
       </div>
 
       {/* --- Modals & Drawers --- */}
