@@ -155,8 +155,8 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
               </span>
               <button
                 onClick={() => {
-                  sound.playClick();
                   onOpenPendingOrderModal();
+                  sound.playClick();
                 }}
                 className="text-[10px] font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
                 title="Create Pending Trade"

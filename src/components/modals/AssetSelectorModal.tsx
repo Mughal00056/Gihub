@@ -45,12 +45,14 @@ export const AssetSelectorModal: React.FC<AssetSelectorModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-200">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200"
+      onClick={onClose}
+    >
       <div 
-        className="fixed inset-0" 
-        onClick={onClose} 
-      />
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col max-h-[85vh] z-10 animate-in zoom-in-95 duration-150">
+        className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col max-h-[85vh] z-10 animate-in zoom-in-95 duration-150"
+        onClick={(e) => e.stopPropagation()}
+      >
         
         {/* Header & Search */}
         <div className="p-3.5 border-b border-gray-100 flex flex-col gap-3">

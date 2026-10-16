@@ -47,9 +47,14 @@ export const PortfolioDrawer: React.FC<PortfolioDrawerProps> = ({
   }, 0);
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="fixed inset-0" onClick={onClose} />
-      <div className="relative w-full max-w-sm bg-white h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-200">
+    <div 
+      className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-xs animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div 
+        className="relative w-full max-w-sm bg-white h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
         
         {/* Header (Matches screenshot "Portfolio (1)" and "P/L +$0.81") */}
         <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/80">

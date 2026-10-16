@@ -343,8 +343,8 @@ export default function App() {
           <div className="flex items-center gap-1 sm:gap-2">
             <button
               onClick={() => {
-                sound.playClick();
                 setShowPortfolioDrawer(true);
+                sound.playClick();
               }}
               className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-gray-700 hover:bg-gray-100 font-semibold text-[11px] transition-colors relative cursor-pointer"
             >
@@ -359,8 +359,8 @@ export default function App() {
 
             <button
               onClick={() => {
-                sound.playClick();
                 setShowLeaderboardModal(true);
+                sound.playClick();
               }}
               className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-gray-700 hover:bg-gray-100 font-semibold text-[11px] transition-colors cursor-pointer"
             >
@@ -370,8 +370,8 @@ export default function App() {
 
             <button
               onClick={() => {
-                sound.playClick();
                 setShowSignalsModal(true);
+                sound.playClick();
               }}
               className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-gray-700 hover:bg-gray-100 font-semibold text-[11px] transition-colors cursor-pointer"
             >

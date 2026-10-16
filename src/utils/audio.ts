@@ -4,16 +4,20 @@ class SoundController {
 
   private getContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
-    if (!this.ctx) {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (AudioCtx) {
-        this.ctx = new AudioCtx();
+    try {
+      if (!this.ctx) {
+        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+        }
       }
+      if (this.ctx && this.ctx.state === 'suspended') {
+        this.ctx.resume().catch(() => {});
+      }
+      return this.ctx;
+    } catch {
+      return null;
     }
-    if (this.ctx && this.ctx.state === 'suspended') {
-      this.ctx.resume();
-    }
-    return this.ctx;
   }
 
   playClick() {
@@ -53,7 +57,9 @@ class SoundController {
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.13);
-    } catch {}
+    } catch {
+      // Audio autoplay policy catch
+    }
   }
 
   playWin() {
@@ -62,20 +68,23 @@ class SoundController {
       const ctx = this.getContext();
       if (!ctx) return;
       const now = ctx.currentTime;
-      // Arpeggiated upbeat victory chime
       [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
-        gain.gain.setValueAtTime(0.15, now + idx * 0.08);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.25);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now + idx * 0.08);
-        osc.stop(now + idx * 0.08 + 0.26);
+        try {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+          gain.gain.setValueAtTime(0.15, now + idx * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.25);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + idx * 0.08);
+          osc.stop(now + idx * 0.08 + 0.26);
+        } catch {}
       });
-    } catch {}
+    } catch {
+      // Audio autoplay policy catch
+    }
   }
 
   playLoss() {
@@ -95,7 +104,9 @@ class SoundController {
       gain.connect(ctx.destination);
       osc.start(now);
       osc.stop(now + 0.26);
-    } catch {}
+    } catch {
+      // Audio autoplay policy catch
+    }
   }
 }
 

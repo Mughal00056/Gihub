@@ -55,13 +55,13 @@ export const Header: React.FC<HeaderProps> = ({
   const currentBalance = accountType === 'demo' ? balanceDemo : balanceReal;
 
   return (
-    <header className="h-14 sm:h-16 bg-white/90 backdrop-blur-md border-b border-gray-200/80 px-2 sm:px-4 flex items-center justify-between z-30 sticky top-0 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+    <header className="h-14 sm:h-16 bg-white/95 backdrop-blur-md border-b border-gray-200/80 px-2 sm:px-4 flex items-center justify-between z-30 sticky top-0 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
       {/* Left: Asset Selector & Info */}
       <div className="flex items-center gap-1.5 sm:gap-2.5">
         <button
           onClick={() => {
-            sound.playClick();
             onOpenAssetSelector();
+            sound.playClick();
           }}
           className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-all active:scale-95 group text-left cursor-pointer"
           title="Change Asset"
@@ -85,8 +85,8 @@ export const Header: React.FC<HeaderProps> = ({
 
         <button
           onClick={() => {
-            sound.playClick();
             onOpenAssetInfo();
+            sound.playClick();
           }}
           className="p-1.5 sm:p-2 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors active:scale-95 cursor-pointer"
           title="Asset Info & Conditions"
@@ -101,8 +101,8 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="relative">
           <button
             onClick={() => {
-              sound.playClick();
               setShowAccountDropdown(!showAccountDropdown);
+              sound.playClick();
             }}
             className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-xs sm:text-sm font-semibold text-gray-800 transition-all cursor-pointer"
           >
@@ -123,15 +123,18 @@ export const Header: React.FC<HeaderProps> = ({
                 className="fixed inset-0 z-40" 
                 onClick={() => setShowAccountDropdown(false)} 
               />
-              <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+              <div 
+                className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <div className="text-[11px] font-semibold text-gray-400 px-2 py-1 uppercase tracking-wider">
                   Accounts
                 </div>
 
                 <div 
                   onClick={() => {
-                    sound.playClick();
                     onSelectAccountType('demo');
+                    sound.playClick();
                     setShowAccountDropdown(false);
                   }}
                   className={`flex items-center justify-between p-2.5 rounded-lg cursor-pointer transition-colors ${
@@ -150,8 +153,8 @@ export const Header: React.FC<HeaderProps> = ({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      sound.playClick();
                       onResetDemoBalance();
+                      sound.playClick();
                     }}
                     className="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-100/60 rounded-md transition-colors"
                     title="Reset to $10,000"
@@ -162,8 +165,8 @@ export const Header: React.FC<HeaderProps> = ({
 
                 <div 
                   onClick={() => {
-                    sound.playClick();
                     onSelectAccountType('real');
+                    sound.playClick();
                     setShowAccountDropdown(false);
                   }}
                   className={`flex items-center justify-between p-2.5 mt-1 rounded-lg cursor-pointer transition-colors ${
@@ -182,8 +185,8 @@ export const Header: React.FC<HeaderProps> = ({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      sound.playClick();
                       onOpenDeposit();
+                      sound.playClick();
                     }}
                     className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2 py-1 rounded"
                   >
@@ -195,11 +198,11 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </div>
 
-        {/* Deposit / Trade Now Button (Screenshot purple gradient) */}
+        {/* Deposit / Trade Now Button */}
         <button
           onClick={() => {
-            sound.playClick();
             onOpenDeposit();
+            sound.playClick();
           }}
           className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6366f1] via-[#7c3aed] to-[#6d28d9] hover:from-[#4f46e5] hover:to-[#5b21b6] text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm hover:shadow active:scale-95 transition-all cursor-pointer"
         >
@@ -217,11 +220,11 @@ export const Header: React.FC<HeaderProps> = ({
           {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4 text-red-400" />}
         </button>
 
-        {/* View Mode Toggle (Mobile simulation preview vs Full responsive) */}
+        {/* View Mode Toggle */}
         <button
           onClick={onToggleMobileFrame}
           className="hidden lg:flex p-2 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-          title={mobileFrameMode ? 'Switch to Fullscreen Workstation View' : 'Preview Exact Mobile Frame View'}
+          title={mobileFrameMode ? 'Switch to Fullscreen Workstation View' : 'Preview Mobile Frame View'}
         >
           {mobileFrameMode ? <Monitor className="w-4 h-4 text-indigo-600" /> : <Smartphone className="w-4 h-4" />}
         </button>
@@ -229,8 +232,8 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Alerts Button */}
         <button
           onClick={() => {
-            sound.playClick();
             onOpenAlerts();
+            sound.playClick();
           }}
           className="p-1.5 sm:p-2 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors relative cursor-pointer"
           title="Alerts & Signals"
@@ -242,8 +245,8 @@ export const Header: React.FC<HeaderProps> = ({
         {/* User / Profile Drawer Button */}
         <button
           onClick={() => {
-            sound.playClick();
             onOpenProfile();
+            sound.playClick();
           }}
           className="flex items-center gap-2 p-1 sm:p-1.5 pl-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-xs font-semibold text-gray-800 transition-all cursor-pointer"
           title="Apex Store Profile"

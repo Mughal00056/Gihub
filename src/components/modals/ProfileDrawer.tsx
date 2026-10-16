@@ -44,9 +44,14 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="fixed inset-0" onClick={onClose} />
-      <div className="relative w-full max-w-xs sm:max-w-sm bg-white h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-200 overflow-y-auto">
+    <div 
+      className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-xs animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div 
+        className="relative w-full max-w-xs sm:max-w-sm bg-white h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-200 overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         
         {/* User Card Header (Exact reference from screenshot: Apex Store, ownerofapexstore@gmail.com, ! Not Verified, ID: 1328493897) */}
         <div className="p-4 bg-gray-50/90 border-b border-gray-100">
